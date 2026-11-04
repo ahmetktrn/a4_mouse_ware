@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+    <!-- WPF and WinForms share type names; keep usings explicit to avoid ambiguity. -->
+    <ImplicitUsings>disable</ImplicitUsings>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+    <AssemblyName>MouseWare</AssemblyName>
+    <RootNamespace>MouseWare.App</RootNamespace>
+    <ApplicationIcon>Assets\mouseware.ico</ApplicationIcon>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <SatelliteResourceLanguages>en;tr</SatelliteResourceLanguages>
+    <!-- Native interop declarations use DllImport on purpose. -->
+    <NoWarn>$(NoWarn);SYSLIB1054;CA1416;WFAC010</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MouseWare.Core\MouseWare.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\mouseware.ico" />
+  </ItemGroup>
+
+</Project>

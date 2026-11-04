@@ -1,0 +1,199 @@
+<Window x:Class="MouseWare.App.UI.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:l="clr-namespace:MouseWare.App.Localization"
+        Title="MouseWare" Width="1000" Height="680" MinWidth="780" MinHeight="520"
+        WindowStartupLocation="CenterScreen" Style="{StaticResource AppWindow}"
+        Icon="/Assets/mouseware.ico">
+    <DockPanel>
+        <!-- Header -->
+        <Border DockPanel.Dock="Top" Background="{StaticResource CardBrush}" BorderBrush="{StaticResource LineBrush}"
+                BorderThickness="0,0,0,1" Padding="20,12">
+            <DockPanel>
+                <Image Source="/Assets/mouseware.ico" Width="36" Height="36" VerticalAlignment="Center" />
+                <StackPanel DockPanel.Dock="Right" VerticalAlignment="Center" HorizontalAlignment="Right">
+                    <CheckBox x:Name="EnabledToggle" FontWeight="SemiBold" HorizontalAlignment="Right"
+                              Content="{Binding [Header_Enabled], Source={x:Static l:Loc.Instance}}"
+                              Click="EnabledToggle_Click" />
+                    <TextBlock Style="{StaticResource Muted}" FontSize="12" HorizontalAlignment="Right"
+                               Text="{Binding [Header_Hotkey], Source={x:Static l:Loc.Instance}}" />
+                </StackPanel>
+                <StackPanel Margin="12,0" VerticalAlignment="Center">
+                    <TextBlock Text="MouseWare" FontSize="20" FontWeight="SemiBold" />
+                    <TextBlock Style="{StaticResource Muted}" Text="{Binding [Header_Subtitle], Source={x:Static l:Loc.Instance}}" />
+                </StackPanel>
+            </DockPanel>
+        </Border>
+
+        <TabControl x:Name="Tabs" Margin="16" Padding="0,12,0,0" Background="Transparent" BorderThickness="0"
+                    SelectionChanged="Tabs_SelectionChanged">
+
+            <!-- ============ Mappings ============ -->
+            <TabItem Header="{Binding [Tab_Buttons], Source={x:Static l:Loc.Instance}}" Padding="12,6">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="250" />
+                        <ColumnDefinition Width="12" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <Border Style="{StaticResource Card}">
+                        <DockPanel>
+                            <TextBlock DockPanel.Dock="Top" Style="{StaticResource SectionTitle}"
+                                       Text="{Binding [Profiles_Title], Source={x:Static l:Loc.Instance}}" />
+                            <UniformGrid DockPanel.Dock="Bottom" Rows="1" Margin="0,10,0,0">
+                                <Button Margin="0,0,4,0" Click="AddProfile_Click" Content="{Binding [Profiles_Add], Source={x:Static l:Loc.Instance}}" />
+                                <Button x:Name="EditProfileButton" Margin="2,0" Click="EditProfile_Click" Content="{Binding [Profiles_Edit], Source={x:Static l:Loc.Instance}}" />
+                                <Button x:Name="RemoveProfileButton" Margin="4,0,0,0" Click="RemoveProfile_Click" Content="{Binding [Profiles_Remove], Source={x:Static l:Loc.Instance}}" />
+                            </UniformGrid>
+                            <ListBox x:Name="ProfileList" DisplayMemberPath="Display" BorderThickness="0"
+                                     SelectionChanged="ProfileList_SelectionChanged">
+                                <ListBox.ItemContainerStyle>
+                                    <Style TargetType="ListBoxItem">
+                                        <Setter Property="Padding" Value="8,6" />
+                                    </Style>
+                                </ListBox.ItemContainerStyle>
+                            </ListBox>
+                        </DockPanel>
+                    </Border>
+
+                    <Border Grid.Column="2" Style="{StaticResource Card}">
+                        <DockPanel>
+                            <TextBlock x:Name="ProfileHint" DockPanel.Dock="Top" Style="{StaticResource Muted}" Margin="0,0,0,12" />
+                            <Border DockPanel.Dock="Bottom" Background="{StaticResource AccentSoftBrush}" CornerRadius="6" Padding="10,8" Margin="0,12,0,0">
+                                <TextBlock TextWrapping="Wrap" Text="{Binding [Mappings_GreyNote], Source={x:Static l:Loc.Instance}}" />
+                            </Border>
+                            <Grid DockPanel.Dock="Top" Margin="8,0,8,6">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="210" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Style="{StaticResource Muted}" FontWeight="SemiBold" Text="{Binding [Col_Button], Source={x:Static l:Loc.Instance}}" />
+                                <TextBlock Grid.Column="1" Style="{StaticResource Muted}" FontWeight="SemiBold" Text="{Binding [Col_Action], Source={x:Static l:Loc.Instance}}" />
+                            </Grid>
+                            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                <ItemsControl x:Name="MappingList">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border BorderBrush="{StaticResource LineBrush}" BorderThickness="0,0,0,1" Padding="8,8">
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="210" />
+                                                        <ColumnDefinition Width="*" />
+                                                        <ColumnDefinition Width="Auto" />
+                                                    </Grid.ColumnDefinitions>
+                                                    <TextBlock Text="{Binding Name}" FontWeight="SemiBold" VerticalAlignment="Center" TextWrapping="Wrap" />
+                                                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="0,0,8,0">
+                                                        <TextBlock Text="{Binding ActionText}" TextTrimming="CharacterEllipsis" ToolTip="{Binding ActionText}" />
+                                                        <TextBlock Text="{Binding Note}" Style="{StaticResource Muted}" FontSize="12" Visibility="{Binding NoteVisibility}" />
+                                                    </StackPanel>
+                                                    <StackPanel Grid.Column="2" Orientation="Horizontal">
+                                                        <Button Content="{Binding ChangeText}" Tag="{Binding Trigger}" Click="ChangeMapping_Click" Style="{StaticResource PrimaryButton}" MinWidth="90" />
+                                                        <Button Content="{Binding ResetText}" Tag="{Binding Trigger}" Click="ResetMapping_Click" Margin="6,0,0,0" MinWidth="80"
+                                                                IsEnabled="{Binding CanReset}" />
+                                                    </StackPanel>
+                                                </Grid>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </ScrollViewer>
+                        </DockPanel>
+                    </Border>
+                </Grid>
+            </TabItem>
+
+            <!-- ============ Button test ============ -->
+            <TabItem Header="{Binding [Tab_Test], Source={x:Static l:Loc.Instance}}" Padding="12,6">
+                <Border Style="{StaticResource Card}">
+                    <DockPanel>
+                        <TextBlock DockPanel.Dock="Top" TextWrapping="Wrap" Text="{Binding [Test_Instructions], Source={x:Static l:Loc.Instance}}" />
+                        <TextBlock DockPanel.Dock="Top" Margin="0,8,0,0" Foreground="{StaticResource WarnBrush}" TextWrapping="Wrap"
+                                   Text="{Binding [Test_A4Warning], Source={x:Static l:Loc.Instance}}" />
+                        <WrapPanel DockPanel.Dock="Top" Margin="0,12,0,8">
+                            <CheckBox x:Name="PauseMappingCheck" IsChecked="True" Margin="0,0,16,0" Click="PauseMapping_Click"
+                                      Content="{Binding [Test_Pause], Source={x:Static l:Loc.Instance}}" />
+                            <Button Margin="0,0,6,0" Click="ClearTest_Click" Content="{Binding [Test_Clear], Source={x:Static l:Loc.Instance}}" />
+                            <Button Margin="0,0,6,0" Click="CopyTest_Click" Content="{Binding [Test_Copy], Source={x:Static l:Loc.Instance}}" />
+                            <Button Margin="0,0,6,0" Click="ListDevices_Click" Content="{Binding [Test_Devices], Source={x:Static l:Loc.Instance}}" />
+                            <Button x:Name="AddKeyTriggerButton" Click="AddKeyTrigger_Click" Content="{Binding [Test_AddKey], Source={x:Static l:Loc.Instance}}" />
+                        </WrapPanel>
+                        <TextBlock x:Name="TestStatus" DockPanel.Dock="Bottom" Margin="0,8,0,0" Foreground="{StaticResource OkBrush}" TextWrapping="Wrap" />
+                        <ListBox x:Name="TestLog" FontFamily="Cascadia Mono, Consolas" FontSize="13"
+                                 VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling" />
+                    </DockPanel>
+                </Border>
+            </TabItem>
+
+            <!-- ============ Settings ============ -->
+            <TabItem Header="{Binding [Tab_Settings], Source={x:Static l:Loc.Instance}}" Padding="12,6">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel MaxWidth="720" HorizontalAlignment="Left">
+                        <Border Style="{StaticResource Card}">
+                            <StackPanel>
+                                <TextBlock Style="{StaticResource SectionTitle}" Text="{Binding [Settings_General], Source={x:Static l:Loc.Instance}}" />
+                                <TextBlock Style="{StaticResource FieldLabel}" Margin="0,0,0,4" Text="{Binding [Settings_Language], Source={x:Static l:Loc.Instance}}" />
+                                <ComboBox x:Name="LanguageCombo" Width="200" HorizontalAlignment="Left" SelectionChanged="LanguageCombo_SelectionChanged">
+                                    <ComboBoxItem Tag="tr">Türkçe</ComboBoxItem>
+                                    <ComboBoxItem Tag="en">English</ComboBoxItem>
+                                </ComboBox>
+                                <CheckBox x:Name="StartupCheck" Margin="0,12,0,0" Click="StartupCheck_Click"
+                                          Content="{Binding [Settings_Startup], Source={x:Static l:Loc.Instance}}" />
+                                <TextBlock x:Name="GestureLabel" Style="{StaticResource FieldLabel}" Margin="0,14,0,4" />
+                                <Slider x:Name="GestureSlider" Minimum="10" Maximum="150" TickFrequency="5" IsSnapToTickEnabled="True"
+                                        Width="320" HorizontalAlignment="Left" ValueChanged="GestureSlider_ValueChanged"
+                                        PreviewMouseUp="GestureSlider_Commit" PreviewKeyUp="GestureSlider_Commit" />
+                                <TextBlock Style="{StaticResource Muted}" Text="{Binding [Settings_GestureHelp], Source={x:Static l:Loc.Instance}}" />
+                            </StackPanel>
+                        </Border>
+
+                        <Border Style="{StaticResource Card}" Margin="0,12,0,0">
+                            <StackPanel>
+                                <TextBlock Style="{StaticResource SectionTitle}" Text="{Binding [Settings_Admin_Title], Source={x:Static l:Loc.Instance}}" />
+                                <TextBlock x:Name="AdminText" TextWrapping="Wrap" />
+                                <Button x:Name="AdminButton" Margin="0,10,0,0" HorizontalAlignment="Left" Click="RestartAdmin_Click"
+                                        Content="{Binding [Settings_Admin_Restart], Source={x:Static l:Loc.Instance}}" />
+                            </StackPanel>
+                        </Border>
+
+                        <Border Style="{StaticResource Card}" Margin="0,12,0,0">
+                            <StackPanel>
+                                <TextBlock Style="{StaticResource SectionTitle}" Text="{Binding [Settings_Config_Title], Source={x:Static l:Loc.Instance}}" />
+                                <TextBlock x:Name="ConfigPathText" Style="{StaticResource Muted}" />
+                                <WrapPanel Margin="0,10,0,0">
+                                    <Button Margin="0,0,6,6" Click="OpenFolder_Click" Content="{Binding [Settings_OpenFolder], Source={x:Static l:Loc.Instance}}" />
+                                    <Button Margin="0,0,6,6" Click="Export_Click" Content="{Binding [Settings_Export], Source={x:Static l:Loc.Instance}}" />
+                                    <Button Margin="0,0,6,6" Click="Import_Click" Content="{Binding [Settings_Import], Source={x:Static l:Loc.Instance}}" />
+                                    <Button Margin="0,0,6,6" Click="ResetAll_Click" Foreground="{StaticResource ErrorBrush}"
+                                            Content="{Binding [Settings_ResetAll], Source={x:Static l:Loc.Instance}}" />
+                                </WrapPanel>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <!-- ============ About ============ -->
+            <TabItem Header="{Binding [Tab_About], Source={x:Static l:Loc.Instance}}" Padding="12,6">
+                <Border Style="{StaticResource Card}" MaxWidth="720" HorizontalAlignment="Left" VerticalAlignment="Top">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="/Assets/mouseware.ico" Width="48" Height="48" />
+                            <StackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                <TextBlock Text="MouseWare" FontSize="20" FontWeight="SemiBold" />
+                                <TextBlock x:Name="VersionText" Style="{StaticResource Muted}" />
+                            </StackPanel>
+                        </StackPanel>
+                        <TextBlock Margin="0,14,0,0" TextWrapping="Wrap" Text="{Binding [About_Text], Source={x:Static l:Loc.Instance}}" />
+                        <TextBlock Margin="0,10,0,0" TextWrapping="Wrap" FontWeight="SemiBold" Text="{Binding [About_Hotkey], Source={x:Static l:Loc.Instance}}" />
+                        <WrapPanel Margin="0,14,0,0">
+                            <Button Style="{StaticResource LinkButton}" Click="OpenLog_Click" Content="{Binding [About_Log], Source={x:Static l:Loc.Instance}}" />
+                            <Button Style="{StaticResource LinkButton}" Click="OpenRepo_Click" Content="{Binding [About_Repo], Source={x:Static l:Loc.Instance}}" />
+                        </WrapPanel>
+                    </StackPanel>
+                </Border>
+            </TabItem>
+        </TabControl>
+    </DockPanel>
+</Window>
